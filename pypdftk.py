@@ -168,3 +168,22 @@ def stamp(pdf_path, stamp_pdf_path, output_pdf_path=None):
     args = [PDFTK_PATH, pdf_path, 'multistamp', stamp_pdf_path, 'output', output]
     run_command(args)
     return output
+
+def add_background(file, background, out_file=None):
+    '''
+        Add Background to PDF files.
+        Return temp file if no out_file provided.
+    '''
+    cleanOnFail = False
+    if not out_file:
+        cleanOnFail = True
+        handle, out_file = tempfile.mkstemp()
+    
+    cmd = "%s %s background %s output %s" % (PDFTK_PATH, file, background, out_file)
+    try:
+        run_command(cmd, True)
+    except:
+        if cleanOnFail:
+            os.remove(tmp_fdf)
+        raise
+    return out_file
